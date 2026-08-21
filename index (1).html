@@ -14,7 +14,7 @@
   <header class="m41-header">
     <div class="m41-logo">M<span>41</span></div>
     <nav class="m41-nav">
-      <span>Routes</span>
+      <span id="nav-routes" class="m41-nav-link">Routes</span>
       <span>How it works</span>
       <span>Permits</span>
       <span>Sign in</span>
@@ -64,6 +64,15 @@
         </div>
         <button class="m41-cta" id="btn-search">Search rides</button>
       </div>
+    </section>
+
+    <!-- ROUTES -->
+    <section id="view-routes" class="m41-hero" hidden>
+      <button class="m41-back" id="btn-back-home-from-routes">← back to search</button>
+      <div class="m41-eyebrow">Three ways through the Pamirs</div>
+      <h2 class="m41-section-title">Choose your route</h2>
+      <p class="m41-section-sub">Same two endpoints, very different journeys. Pick a route to see jeeps running it.</p>
+      <div class="m41-route-cards" id="route-cards"></div>
     </section>
 
     <!-- RESULTS -->

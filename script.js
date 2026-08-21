@@ -50,6 +50,39 @@ const RIDES = [
   },
 ];
 
+const ROUTES = [
+  {
+    id: "direct",
+    name: "Direct Highway",
+    duration: "3 days",
+    difficulty: "Moderate",
+    season: "Jun–Sep",
+    stops: ["Khorog", "Murghab", "Ak-Baital Pass"],
+    description:
+      "The fastest way through, following the M41 itself over the highest points of the highway.",
+  },
+  {
+    id: "wakhan",
+    name: "Wakhan Corridor Loop",
+    duration: "7 days",
+    difficulty: "Adventurous",
+    season: "Jun–Sep",
+    stops: ["Ishkashim", "Wakhan Valley", "Bulunkul", "Murghab"],
+    description:
+      "A scenic detour along the Afghan border through old forts and hot springs before rejoining the highway.",
+  },
+  {
+    id: "bartang",
+    name: "Bartang Valley Route",
+    duration: "5 days",
+    difficulty: "Remote",
+    season: "Jul–Sep",
+    stops: ["Rushan", "Bartang Valley", "Murghab"],
+    description:
+      "An unpaved, remote alternative through one of the most isolated valleys in the Pamirs. 4x4 only.",
+  },
+];
+
 const state = {
   direction: "d2o",
   seatType: "shared",
@@ -97,8 +130,38 @@ function renderElevation() {
 }
 
 function showView(name) {
-  ["home", "results", "checkout", "confirmed"].forEach((v) => {
+  ["home", "routes", "results", "checkout", "confirmed"].forEach((v) => {
     document.getElementById("view-" + v).hidden = v !== name;
+  });
+}
+
+function renderRoutes() {
+  const container = document.getElementById("route-cards");
+  container.innerHTML = "";
+
+  ROUTES.forEach((r) => {
+    const card = document.createElement("div");
+    card.className = "m41-route-card";
+    const difficultyClass = r.difficulty === "Remote" ? "difficulty-remote" : "";
+    card.innerHTML = `
+      <h3>${r.name}</h3>
+      <div class="m41-route-meta">
+        <span>${r.duration}</span>
+        <span class="${difficultyClass}">${r.difficulty}</span>
+        <span>${r.season}</span>
+      </div>
+      <p class="m41-route-desc">${r.description}</p>
+      <div class="m41-route-stops"><b>Stops:</b> ${r.stops.join(" · ")}</div>
+      <button class="m41-cta ghost" data-route="${r.id}" style="margin-top:6px;">View jeeps on this route</button>
+    `;
+    container.appendChild(card);
+  });
+
+  container.querySelectorAll("button[data-route]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      renderResults();
+      showView("results");
+    });
   });
 }
 
@@ -229,7 +292,13 @@ document.addEventListener("DOMContentLoaded", () => {
     showView("results");
   });
 
+  document.getElementById("nav-routes").addEventListener("click", () => {
+    renderRoutes();
+    showView("routes");
+  });
+
   document.getElementById("btn-back-home").addEventListener("click", () => showView("home"));
+  document.getElementById("btn-back-home-from-routes").addEventListener("click", () => showView("home"));
   document.getElementById("btn-back-results").addEventListener("click", () => showView("results"));
 
   document.getElementById("input-name").addEventListener("input", (e) => {
