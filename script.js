@@ -29,10 +29,10 @@ const RIDES = [
   {
     id: "r2",
     operator: "Discover The Pamirs",
-    vehicle: "UAZ Patriot 4x4",
+    vehicle: "Toyota Land Cruiser 4x4",
     departs: "08:00",
     duration: "7 days",
-    stops: ["Jizeu", "Wakhan Valley", "Bulunkul", "Karakul Lake"],
+    stops: ["Dushanbe", "Kalaikhum", "Khorog", "Wakhan Valley", "Langar", "Alichur", "Karakul Lake", "Osh"],
     sharedSeatPrice: 410,
     privatePrice: 1380,
     seatsLeft: 1,
@@ -130,7 +130,7 @@ function renderElevation() {
 }
 
 function showView(name) {
-  ["home", "routes", "results", "checkout", "confirmed"].forEach((v) => {
+  ["home", "routes", "how-it-works", "permits", "results", "checkout", "confirmed"].forEach((v) => {
     document.getElementById("view-" + v).hidden = v !== name;
   });
 }
@@ -171,6 +171,11 @@ function originDestination() {
     : { origin: "Osh", destination: "Dushanbe" };
 }
 
+function getRideStopsForDirection(ride) {
+  if (!ride || !Array.isArray(ride.stops)) return [];
+  return state.direction === "d2o" ? ride.stops : [...ride.stops].reverse();
+}
+
 function renderResults() {
   const { origin, destination } = originDestination();
   document.getElementById("results-title").textContent = `${origin} → ${destination}`;
@@ -180,9 +185,12 @@ function renderResults() {
   const container = document.getElementById("results-cards");
   container.innerHTML = "";
 
-  RIDES.forEach((r) => {
+  const visibleRides = [RIDES.find((r) => r.operator === "Discover The Pamirs")].filter(Boolean);
+
+  visibleRides.forEach((r) => {
     const price = state.seatType === "shared" ? r.sharedSeatPrice : r.privatePrice;
     const priceNote = state.seatType === "shared" ? `per seat · ${r.seatsLeft} left` : "whole vehicle";
+    const stops = getRideStopsForDirection(r);
 
     const card = document.createElement("div");
     card.className = "m41-card";
@@ -190,7 +198,7 @@ function renderResults() {
       <div>
         <div class="m41-card-op">${r.operator}</div>
         <div class="m41-card-meta">${r.vehicle} · departs ${r.departs} · ${r.duration}</div>
-        <div style="margin-top:8px;">${r.stops.map((s) => `<span class="m41-tag">${s}</span>`).join("")}</div>
+        <div style="margin-top:8px;">${stops.map((s) => `<span class="m41-tag">${s}</span>`).join("")}</div>
       </div>
       <div style="text-align:right;">
         <div class="m41-price">$${price}<small>${priceNote}</small></div>
@@ -297,8 +305,18 @@ document.addEventListener("DOMContentLoaded", () => {
     showView("routes");
   });
 
+  document.getElementById("nav-how-it-works").addEventListener("click", () => {
+    showView("how-it-works");
+  });
+
+  document.getElementById("nav-permits").addEventListener("click", () => {
+    showView("permits");
+  });
+
   document.getElementById("btn-back-home").addEventListener("click", () => showView("home"));
   document.getElementById("btn-back-home-from-routes").addEventListener("click", () => showView("home"));
+  document.getElementById("btn-back-home-from-how").addEventListener("click", () => showView("home"));
+  document.getElementById("btn-back-home-from-permits").addEventListener("click", () => showView("home"));
   document.getElementById("btn-back-results").addEventListener("click", () => showView("results"));
 
   document.getElementById("input-name").addEventListener("input", (e) => {
